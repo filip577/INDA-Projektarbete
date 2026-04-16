@@ -15,12 +15,23 @@ typedef struct s_map
 
 
 /* Functions */
-t_map build_map(char **layout); // function that builds a map, input char **layout, output a complete t_map, saves the grid, counts dimension and finds player starting coordinates
+
+/* Map creation */
+t_map load_map_from_file(const char *filename); // Method to load/create a map from a file, takes in a filename and returns a complete t_map
+
+/* Map parsing / setup */
 void find_player_start(t_map *map); //takes a pointer to t_map, goes through the map to find 'P', returns nothing
+
+/* Map queries */
 char get_tile(t_map *map, int x, int y); //Returns a tile form a map, takes a map, gets x and y coordinates and returns a char, '1' for wall '0' for floor 'P' for player start etc.
 int is_wall(t_map *map, int x, int y); //Answers if a tile is a wall or a floor, returns int because 1 is wall 0 is floor and can be used in if statements for C
 int is_inside_map(t_map *map, int x, int y); //Protective function. Checks if koordinates are inside the maps bounds, important to avoid crashes, e.g x>= 0, x<map->width
+
+/* Debug */
 void print_map(t_map *map); //Debug function, can write out the map in terminal to check that everything is correct.
+
+/* Memory */
+void free_map(t_map *map); //Method to release memory after map is built
 
 #endif
 
