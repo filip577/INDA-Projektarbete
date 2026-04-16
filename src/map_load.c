@@ -57,7 +57,7 @@ static int count_lines_in_file(const char *filename)
         exit_with_error("could not open map file"); //Exit directly if it fails to open file
 
     count = 0; //start with 0 lines
-    while (fgets(buffer, sizeof(buffer),file)); //reads the file line by line until fgets cannot continue, for each line count increases by 1
+    while (fgets(buffer, sizeof(buffer),file)) //reads the file line by line until fgets cannot continue, for each line count increases by 1
         count++;
 
     fclose(file); //Close file
