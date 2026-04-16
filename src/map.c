@@ -17,7 +17,7 @@ char get_tile(t_map *map, int x, int y)
 {
     if (!is_inside_map(map, x, y))
         return ('1');
-    return (map->grid[y][x]);
+    return (map->grid[y][x]); //if the position is valid we return the contents for the position
 }
 
 /**
@@ -33,6 +33,7 @@ int is_wall(t_map *map, int x,int y)
  */
 void find_player_start(t_map *map)
 {
+    //Loop variables to iterate through the map
     int x;
     int y;
 
@@ -64,7 +65,7 @@ void print_map(t_map *map)
     y = 0;
     while (y < map->height)
     {
-        printf("%s\n", map->grid[y]);
+        printf("%s\n", map->grid[y]); //Iterates through each line, prints out the whole line as a string
         y++;
     }
 }
@@ -79,8 +80,8 @@ void free_map(t_map *map)
     y = 0;
     while (y > map->height)
     {
-        free(map->grid[y]);
+        free(map->grid[y]); //Free every line separately, since every line was allocated separatley
         y++;
     }
-    free(map->grid);
+    free(map->grid); //Free the actual array which held the pointers to the lines
 }
