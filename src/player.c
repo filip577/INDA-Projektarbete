@@ -43,8 +43,6 @@ void keyUp(unsigned char key, int x, int y) {
 Takes values from the player struct and updates the player position on the map using trigonometry
 */
 void player_position_update(t_player *p, t_map *map){
-    float rotation__speed = 2.0;
-    float movement_speed = 3.0;
     float new_player_x = p->player_x;
     float new_player_y = p->player_y;
     if(turning_left){

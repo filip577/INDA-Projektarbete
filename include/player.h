@@ -10,8 +10,12 @@ typedef struct s_player {
     float player_x;
     float player_y;
     float player_angle;
+    float rotation__speed;
+    float movement_speed;
 } t_player;
 
+float rotation__speed = 2.0;
+float movement_speed = 3.0;
 
 void keyDown(unsigned char key, int x, int y); //Updates a boolean if a movement key is pressed
 
