@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include "../include/map.h"'
 
+#define M_PI 3.14159265358979323846
 
 bool turning_left;
 bool turning_right;
@@ -45,6 +46,9 @@ Takes values from the player struct and updates the player position on the map u
 void player_position_update(t_player *p, t_map *map){
     float new_player_x = p->player_x;
     float new_player_y = p->player_y;
+    if(p-> player_angle < 0 || p-> player_angle > 2 * M_PI){
+        p->player_angle = fmod(p->player_angle, 2 * M_PI);
+    }
     if(turning_left){
         p-> player_angle -= rotation__speed;
     }
