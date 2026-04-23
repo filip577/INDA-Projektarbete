@@ -11,53 +11,28 @@
     #endif
 #include "../include/player.h"
 #include <stdbool.h>
-#include "../include/map.h"'
-
-
-bool turning_left;
-bool turning_right;
-bool walking_forwards;
-bool walking_backwards;
-
-/*
-Updates the bool when one of the movement keys are pressed.
-*/
-void keyDown(unsigned char key, int x, int y) {
-    if(key == 'a') turning_left = true;
-    if(key == 'd') turning_right = true;
-    if(key == 'w') walking_forwards = true;
-    if(key == 's') walking_backwards = true;    
-}
-
-/*
-Updates the bool when one of the movement keys are released
-*/
-void keyUp(unsigned char key, int x, int y) {
-    if(key == 'a') turning_left = false;
-    if(key == 'd') turning_right = false;
-    if(key == 'w') walking_forwards = false;
-    if(key == 's') walking_backwards = false; 
-}
+#include "../include/map.h"
+#include "../include/input.h"
 
 /*
 Takes values from the player struct and updates the player position on the map using trigonometry
 */
-void player_position_update(t_player *p, t_map *map){
+void player_position_update(t_player *p, t_map *map, t_input *input){
     float rotation__speed = 2.0;
     float movement_speed = 3.0;
     float new_player_x = p->player_x;
     float new_player_y = p->player_y;
-    if(turning_left){
+    if(input-> turning_left){
         p-> player_angle -= rotation__speed;
     }
-    if(turning_right){
+    if(input-> turning_right){
         p-> player_angle += rotation__speed;
     }
-    if(walking_forwards){
+    if(input-> walking_forwards){
         new_player_x += cos(p->player_angle) * movement_speed;
         new_player_y += sin(p->player_angle) * movement_speed;
     }
-    if(walking_backwards){
+    if(input-> walking_backwards){
         new_player_x -= cos(p->player_angle) * movement_speed;
         new_player_y -= sin(p->player_angle) * movement_speed;
     }
