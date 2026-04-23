@@ -68,4 +68,20 @@ void player_position_update(t_player *p, t_map *map){
         p->player_x = new_player_x;
         p->player_y = new_player_y;
     }
+    if(is_wall(map, new_player_x, new_player_y) && ((p->player_angle < M_PI/2 && p->player_angle > M_PI / 4) 
+    || (p->player_angle > M_PI * 3 / 2 && p->player_angle < 7 / 4 * M_PI))){
+        p->player_x += cos(p->player_angle) * movement_speed;
+    }
+    if(is_wall(map, new_player_x, new_player_y) && ((p->player_angle > M_PI/2 && p->player_angle > M_PI / 4 * 3) 
+    || (p->player_angle < M_PI * 3 / 2 && p->player_angle > 5 / 4 * M_PI))){
+        p->player_x -= cos(p->player_angle) * movement_speed;
+    }
+    if(is_wall(map, new_player_x, new_player_y) && ((p->player_angle > 0 && p->player_angle < M_PI / 4) 
+    || (p->player_angle < M_PI && p->player_angle > 3 / 4 * M_PI))){
+        p->player_x += sin(p->player_angle) * movement_speed;
+    }
+    if(is_wall(map, new_player_x, new_player_y) && ((p->player_angle < 2 * M_PI && p->player_angle > M_PI * 7 / 4) 
+    || (p->player_angle > M_PI && p->player_angle < 5 / 4 * M_PI))){
+        p->player_x -= sin(p->player_angle) * movement_speed;
+    }
 }
