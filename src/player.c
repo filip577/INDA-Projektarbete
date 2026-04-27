@@ -23,10 +23,10 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
     float new_player_x = p->player_x;
     float new_player_y = p->player_y;
     if(input-> turning_left){
-        p-> player_angle -= rotation__speed;
+        p-> player_angle -= p->rotation_speed;
     }
     if(input-> turning_right){
-        p-> player_angle += rotation__speed;
+        p-> player_angle += p->rotation_speed;
     }
     if(input-> walking_forwards){
         new_player_x += cos(p->player_angle) * movement_speed;
@@ -37,10 +37,12 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
         new_player_y -= sin(p->player_angle) * movement_speed;
     }
     
+    //If player walks into a wall with a right angle player pos isn't updated
     if(!is_wall(map, new_player_x, new_player_y)){
         p->player_x = new_player_x;
         p->player_y = new_player_y;
     }
+    //If player walks into a wall with a non right angle update player pos in one direction depending on player angle
     if(is_wall(map, new_player_x, new_player_y) && ((p->player_angle < M_PI/2 && p->player_angle > M_PI / 4) 
     || (p->player_angle > M_PI * 3 / 2 && p->player_angle < 7 / 4 * M_PI))){
         p->player_x += cos(p->player_angle) * movement_speed;
@@ -57,4 +59,8 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
     || (p->player_angle > M_PI && p->player_angle < 5 / 4 * M_PI))){
         p->player_x -= sin(p->player_angle) * movement_speed;
     }
+}
+
+void player_shoot(t_player *p, t_map *m, t_input *){
+    
 }

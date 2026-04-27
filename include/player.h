@@ -10,7 +10,7 @@ typedef struct s_player {
     float player_x;
     float player_y;
     float player_angle;
-    float rotation__speed;
+    float rotation_speed;
     float movement_speed;
 } t_player;
 
