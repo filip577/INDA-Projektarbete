@@ -78,10 +78,11 @@ void free_map(t_map *map)
     int y;
 
     y = 0;
-    while (y > map->height)
+    while (y < map->height)
     {
         free(map->grid[y]); //Free every line separately, since every line was allocated separatley
         y++;
     }
     free(map->grid); //Free the actual array which held the pointers to the lines
+    map->grid = NULL;
 }
