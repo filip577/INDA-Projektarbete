@@ -33,7 +33,7 @@ static const char *choose_map(void)
 		return ("assets/maps/level3.txt");
     if (choice == 4)
     {
-        system("python3 tools/generate_maps.py"); //TODO
+        system(".venv/bin/python tools/generate_map.py"); 
 	    return ("assets/maps/generated/generated_map.txt");
     }
     if (choice != 1)
