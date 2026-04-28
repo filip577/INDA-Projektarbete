@@ -1,26 +1,20 @@
-#ifndef Player_H //Prevents defining player_h twice
-#define Player_H // Define Player_H
+#ifndef PLAYER_H //Prevents defining player_h twice
+#define PLAYER_H // Define PLAYER_H
 
 #include "../include/map.h"
+#include "../include/input.h"
 
-/* 
+/*
 Defines a struct for the player
 */
 typedef struct s_player {
     float player_x;
     float player_y;
     float player_angle;
-    float rotation__speed;
+    float rotation_speed;
     float movement_speed;
 } t_player;
 
-float rotation__speed = 2.0;
-float movement_speed = 3.0;
-
-void keyDown(unsigned char key, int x, int y); //Updates a boolean if a movement key is pressed
-
-void keyUp(unsigned char key, int x, int y); //Updates a boolean if a movement key is released
-
-void player_position_update(t_player *p, t_map *map); //Updates the player position on the map
+void player_position_update(t_player *p, t_map *map, t_input *input); //Updates the player position on the map
 
 #endif

@@ -1,8 +1,13 @@
-#include "GL/glut.h"
+#ifdef __APPLE__
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/glut.h>
+    #include <GL/gl.h>
+#endif
 #include <math.h>
 #include "../include/game.h"
 #include "../include/player.h"
-#include "../include/game.h"
 
 #define FOV 60.0 // Field of view in degrees
 #define SCREEN_WIDTH 800

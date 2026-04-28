@@ -1,5 +1,9 @@
 #include "../include/input.h"
+#include "../include/game.h"
+#include "../include/player.h"
 #include <stdbool.h>
+
+t_input input;
 
 /*
 Updates the bool when one of the movement keys are pressed.
@@ -19,4 +23,10 @@ void keyUp(unsigned char key, int x, int y) {
     if(key == 'd') input.turning_right = false;
     if(key == 'w') input.walking_forwards = false;
     if(key == 's') input.walking_backwards = false; 
+}
+
+
+
+void handle_input(struct s_game *game) {
+	player_position_update(&game->player, &game->map, &input);
 }
