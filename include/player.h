@@ -23,4 +23,6 @@ void keyUp(unsigned char key, int x, int y); //Updates a boolean if a movement k
 
 void player_position_update(t_player *p, t_map *map); //Updates the player position on the map
 
+void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count); //Player shoots in the direction its facing
+
 #endif

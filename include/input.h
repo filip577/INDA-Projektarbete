@@ -7,6 +7,7 @@ typedef struct s_input{
     bool turning_right;
     bool walking_forwards;
     bool walking_backwards;
+    bool shooting;
 }t_input;
 
 t_input input; //creates a variable of the struct used for the input handling and update the player
