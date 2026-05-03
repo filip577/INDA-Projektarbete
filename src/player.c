@@ -62,7 +62,8 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
     }
 }
 
-void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count){
+void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input){
+    input-> shooting = false;
     float shooting_ray_x = p-> player_x;
     float shooting_ray_y = p-> player_y;
     float ray_step_distance = 0.05f;
