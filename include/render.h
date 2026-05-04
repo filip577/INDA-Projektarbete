@@ -1,12 +1,18 @@
-#ifdef RENDER_H //Prevents defining RENDER_H twice
-#define RENDER_H  // Define RENDER_H
+#ifndef RENDER_H
+#define RENDER_H
 
+#include "../include/game.h"
 
-#include #../include/game.h
+// Initialize the renderer. This sets up GLUT and OpenGL state.
+void init_renderer(void);
 
+// Render one frame for the current game state.
+void render_frame(t_game game);
 
-void raycast_render(t_game *game); //Renders the 3D view of the game using raycasting
+// Render the world using raycasting.
+void raycast_render(t_gamegame);
 
-void display(t_game *game); //Displays the rendered view on the screen
+// Handle any renderer-specific input state or callbacks.
+void handle_input(t_game *game);
 
 #endif
