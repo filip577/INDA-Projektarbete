@@ -62,7 +62,8 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
     }
 }
 
-void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count){
+void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input){
+    input-> shooting = false;
     float shooting_ray_x = p-> player_x;
     float shooting_ray_y = p-> player_y;
     float ray_step_distance = 0.05f;
@@ -73,7 +74,8 @@ void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count){
             if(enemies[i]->alive){
                 float distance = sqrt(pow(shooting_ray_x - enemies[i]->enemy_x, 2) + pow(shooting_ray_y - enemies[i]->enemy_y,2));
                 if(distance < 0.01){
-                    enemies[i]->health -= 25;
+                    enemies[i]->health -= 25 - 0.1 * sqrt(pow(p-> player_x - enemies[i]->enemy_x, 2) + 
+                    pow(p-> player_y - enemies[i]->enemy_y,2)); //Damage drop off based on distance from player to enemy
                     if(enemies[i]->health <= 0){
                         enemies[i] = false;
                         enemy_count--;

@@ -27,7 +27,6 @@ void keyUp(unsigned char key, int x, int y) {
     if(key == 'd') input.turning_right = false;
     if(key == 'w') input.walking_forwards = false;
     if(key == 's') input.walking_backwards = false; 
-    if(key == ' ') input.shooting = false;  
 }
 
 
