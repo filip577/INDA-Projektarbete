@@ -13,6 +13,7 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define MAX_DEPTH 20.0 // Rendering distance of 20
+#define M_PI 3.14159265358979323846 
 
 /**
  * Cast a ray from the player's position at a given angle and return the distance to the nearest wall or max reindering distance if no wall is hit.
@@ -26,7 +27,7 @@ static float cast_ray(t_player *player, t_map *map, float ray_angle) {
     float distance = 0.0f;
     float step_size = 0.1f; // Step size for ray marching
 
-    while (distance < max_render_distance) {
+    while (distance < MAX_DEPTH) {
         // Move the ray forward in small steps
         ray_x += ray_cos * step_size; 
         ray_y += ray_sin * step_size;
@@ -37,6 +38,8 @@ static float cast_ray(t_player *player, t_map *map, float ray_angle) {
             // Return the distance to the wall
             return distance; 
         }
+    }
+    return 0;
 }
 
 static float degrees_to_radians(float degrees) 
@@ -50,24 +53,23 @@ static float degrees_to_radians(float degrees)
 static void draw_wall_slice(int x, float distance)
 {
     float wall_height;
-    int half_screen_height = screen_height / 2;
 
     // Calculate wall height based on distance (closer walls appear taller)
-    wall_height = (screen_height / distance) * 0.5f; 
+    wall_height = (SCREEN_HEIGHT / distance) * 0.5f; 
 
-    if (wall_height > screen_height) {
+    if (wall_height > SCREEN_HEIGHT) {
 
         // Cap wall height to screen height
-        wall_height = screen_height; 
+        wall_height = SCREEN_HEIGHT; 
     }
 
     // Calculate starting y position to center the wall slice
-    float start_y = (screen_height - wall_height) / 2.0f; 
+    float start_y = (SCREEN_HEIGHT - wall_height) / 2.0f; 
     // Calculate ending y position of the wall slice
     float end_y = start_y + wall_height; 
 
     // Calculate brightness based on distance (farther walls are darker)
-    float brightness = 1.0f - (distance / max_render_distance) *0.67f; 
+    float brightness = 1.0f - (distance / MAX_DEPTH) *0.67f; 
     // Set wall color based on distance
     glColor3f(brightness, brightness, brightness); 
 
@@ -93,42 +95,42 @@ void raycast_render(t_game *game)
     float ray_angle;
     float distance;
     float fov_radians;
-    float half_fov;
-
-    if (!game || !game->player || !game->map) {
+    //float half_fov;
+    if (!game) {
         // Ensure game, player, and map are valid before rendering
         return; 
     }
 
     // Convert field of view from degrees to radians
     fov_radians = degrees_to_radians(FOV); 
-    half_fov = fov_radians / 2.0f;
+    //half_fov = fov_radians / 2.0f;
 
-    for (x = 0; x < screen_width; x++)
+    for (x = 0; x < SCREEN_WIDTH; x++)
     {
         // Calculate angle offset for the current column centered around the player's view
-        angle_offset = (float)x / screen_width - 0.5f; 
+        angle_offset = (float)x / SCREEN_WIDTH - 0.5f; 
         // Calculate the angle of the ray for the current column
         ray_angle = game->player->player_angle + (angle_offset * fov_radians); 
         // Cast the ray and get the distance to the nearest wall
-        distance = cast_ray(game->player, game->map, ray_angle); 
+        distance = cast_ray(game->player, &game->map, ray_angle); //grid to get 2d map
         // Correct distance for fish-eye effect
         distance *= cos(angle_offset * fov_radians); 
         // Draw the vertical slice of the wall based on the distance
         draw_wall_slice(x, distance); 
 
     }
+}
 
     void display(t_game *game)
 {
     // Clear the screen and depth buffer
-    glClear(gl_color_buffer_bit | gl_depth_buffer_bit); 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
     // Set up the projection matrix for 2D rendering
-    glMatrixMode(gl_projection);
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, screen_width, 0, screen_height, 0,0f, -1.0f, 1.0f);
-    glMatrixMode(gl_modelview);
+    gluOrtho2D(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
@@ -137,9 +139,9 @@ void raycast_render(t_game *game)
 
     // Restore matrices
     glPopMatrix();
-    glMatrixMode(gl_projection);
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glMatrixMode(gl_modelview);
+    glMatrixMode(GL_MODELVIEW);
 
     // Swap buffers to display the rendered frame
     glutSwapBuffers();

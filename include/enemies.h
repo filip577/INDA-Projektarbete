@@ -2,7 +2,7 @@
 #define ENEMIES_H // Define enemies_h
 
 #include <stdbool.h>
-
+/*
 typedef struct s_enemy{
     bool alive;
     float enemy_x;
@@ -12,5 +12,6 @@ typedef struct s_enemy{
 
 t_enemy enemies[10];
 int enemy_count = 1;
+*/
 
 #endif

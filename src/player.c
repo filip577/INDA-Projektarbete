@@ -61,7 +61,7 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
         p->player_x -= sin(p->player_angle) * p->movement_speed;
     }
 }
-
+/*
 void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input){
     input-> shooting = false;
     float shooting_ray_x = p-> player_x;
@@ -87,3 +87,4 @@ void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_
 
     }
 }
+*/

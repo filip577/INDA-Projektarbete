@@ -10,11 +10,11 @@
  */
 void init_player_from_map(t_game *game)
 {
-    game->player.player_x = game->map.player_start_x + 0.5;
-    game->player.player_y = game->map.player_start_y + 0.5;
-    game->player.player_angle = 0.0; //starting angle
-    game->player.movement_speed = 0.1; //starting rotation and movement speed
-    game->player.rotation_speed = 0.1;
+    game->player->player_x = game->map.player_start_x + 0.5;
+    game->player->player_y = game->map.player_start_y + 0.5;
+    game->player->player_angle = 0.0; //starting angle
+    game->player->movement_speed = 0.1; //starting rotation and movement speed
+    game->player->rotation_speed = 0.1;
 }
 
 
@@ -37,8 +37,8 @@ void update_game(t_game *game)
     int player_tile_y;
     char current_tile;
 
-    player_tile_x = (int)game->player.player_x;
-    player_tile_y = (int)game->player.player_y;
+    player_tile_x = (int)game->player->player_x;
+    player_tile_y = (int)game->player->player_y;
 
     current_tile = get_tile(&game->map, player_tile_x, player_tile_y);
 

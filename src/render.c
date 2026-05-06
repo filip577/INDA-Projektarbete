@@ -1,7 +1,13 @@
 #include <stdbool.h>
 #include <math.h>
 #include "../include/render.h"
-#include <GL/glut.h>
+#ifdef __APPLE__
+    #include <GLUT/glut.h>
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/glut.h>
+    #include <GL/gl.h>
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
@@ -50,21 +56,20 @@ static void init_renderer(void)
 
 /**
  * degrees_to_radians converts an angle in degrees to radians.
- */
 static float degrees_to_radians(float degrees)
 {
     return degrees * (M_PI / 180.0f);
 }
+ */
 
 /**
  * cast_ray marches a ray from the player position in a given direction.
  * It returns the distance to the first wall hit, or MAX_DEPTH when no wall
  * is encountered within range.
- */
 static float cast_ray(t_game *game, float ray_angle)
 {
-    float ray_x = game->player.player_x;
-    float ray_y = game->player.player_y;
+    float ray_x = game->player->player_x;
+    float ray_y = game->player->player_y;
     float ray_cos = cosf(ray_angle);
     float ray_sin = sinf(ray_angle);
     float distance = 0.0f;
@@ -80,11 +85,12 @@ static float cast_ray(t_game *game, float ray_angle)
     }
     return MAX_DEPTH;
 }
+*/
 
 /**
  * draw_wall_slice draws a vertical slice of the wall at screen column x.
  * The wall height and brightness are based on the ray distance.
- */
+
 static void draw_wall_slice(int x, float distance)
 {
     if (distance <= 0.0f)
@@ -109,27 +115,8 @@ static void draw_wall_slice(int x, float distance)
     glVertex2f((float)x, end_y);
     glEnd();
 }
+*/
 
-/**
- * raycast_render casts one ray per vertical screen column and draws the
- * resulting wall slices to build the "3D" view.
- */
-void raycast_render(t_game *game)
-{
-    if (!game)
-        return;
-
-    const float fov_radians = degrees_to_radians(FOV_DEGREES);
-
-    for (int x = 0; x < SCREEN_WIDTH; x++)
-    {
-        float sample = ((float)x / (float)SCREEN_WIDTH) - 0.5f;
-        float ray_angle = game->player.player_angle + sample * fov_radians;
-        float distance = cast_ray(game, ray_angle);
-        distance *= cosf(ray_angle - game->player.player_angle);
-        draw_wall_slice(x, distance);
-    }
-}
 
 /**
  * render_frame clears the screen, sets up the projection, renders the scene,
@@ -154,9 +141,9 @@ void render_frame(t_game *game)
 
 /**
  * handle_input is a stub placeholder for future input-driven rendering hooks.
- */
+
 void handle_input(t_game *game)
 {
     (void)game;
 }
-
+ */

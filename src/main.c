@@ -38,7 +38,7 @@ static const char *choose_map(void)
     }
     if (choice != 1)
         printf("Invalid choice. Defaulting to level1.\n");
-	return ("assets/maps/level1.txt");
+	    return ("assets/maps/level1.txt");
 }
 
 static void game_loop_wrapper(void)
