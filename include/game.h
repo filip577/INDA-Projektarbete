@@ -3,6 +3,7 @@
 #include "../include/map.h"    //Interface
 #include "../include/player.h" // -II-
 #include <stdlib.h>
+#include <stdbool.h>
 
 
 /**
