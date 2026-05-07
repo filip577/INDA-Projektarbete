@@ -13,7 +13,10 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define MAX_DEPTH 20.0 // Rendering distance of 20
+
+#ifndef M_PI
 #define M_PI 3.14159265358979323846 
+#endif
 
 /**
  * Cast a ray from the player's position at a given angle and return the distance to the nearest wall or max reindering distance if no wall is hit.

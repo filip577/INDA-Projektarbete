@@ -30,14 +30,14 @@ static void init_renderer(void)
     if (renderer_initialized)
         return;
 
-    int argc = 1;
-    char *argv[2] = {"game", NULL};
+    // int argc = 1;
+    // char *argv[2] = {"game", NULL};
 
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("INDA Projektarbete");
+    // glutInit(&argc, argv);
+    // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+    // glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    // glutInitWindowPosition(100, 100);
+    // glutCreateWindow("INDA Projektarbete");
 
     glClearColor(0.15f, 0.20f, 0.30f, 1.0f);
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);

@@ -24,7 +24,18 @@ void init_player_from_map(t_game *game)
 void init_game(t_game *game, const char *map_file)
 {
     game->map = load_map_from_file(map_file); //loads map from file using map_load.c function
+    
+    game->player = malloc(sizeof(t_player));
+    if (!game->player)
+    {
+        fprintf(stderr, "Error: failed to allocate player\n");
+        free_map(&game->map);
+        exit(EXIT_FAILURE);
+    }
+    game->input = &input;
+    
     init_player_from_map(game); //initialises the player
+    
     game->running = true; //game can run when true
 }
 

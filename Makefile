@@ -10,11 +10,15 @@ SRC = src/main.c \
       src/raycast.c
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -DGL_SILENCE_DEPRECATION
+CFLAGS = -Wall -Wextra -Werror \
+         -DGL_SILENCE_DEPRECATION \
+         -g \
+         -fsanitize=address \
+         -fno-omit-frame-pointer
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	LDFLAGS = -framework OpenGL -framework GLUT
+	LDFLAGS = -fsanitize=address -framework OpenGL -framework GLUT
 else
 	LDFLAGS = -lGL -lGLU -lglut -lm
 endif
