@@ -17,8 +17,9 @@ void keyDown(unsigned char key, int x, int y) {
     if(key == 'a') input.turning_left = true;
     if(key == 'd') input.turning_right = true;
     if(key == 'w') input.walking_forwards = true;
-    if(key == 's') input.walking_backwards = true;   
-    //if(key == ' ') input.shooting = true;  
+    if(key == 's') input.walking_backwards = true;
+    if(key == 27)  input.quit_requested = true; //ESC closes the game (also used to leave the win screen)
+    //if(key == ' ') input.shooting = true;
 }
 
 /*

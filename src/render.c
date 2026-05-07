@@ -22,22 +22,13 @@
 static bool renderer_initialized = false;
 
 /**
- * init_renderer initializes GLUT and OpenGL state. This is called
- * the first time the renderer is requested.
+ * init_renderer sets up OpenGL state on first frame. GLUT and the window
+ * are created in main(); this only configures the GL pipeline.
  */
 static void init_renderer(void)
 {
     if (renderer_initialized)
         return;
-
-    int argc = 1;
-    char *argv[2] = {"game", NULL};
-
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("INDA Projektarbete");
 
     glClearColor(0.15f, 0.20f, 0.30f, 1.0f);
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -47,9 +38,6 @@ static void init_renderer(void)
     gluOrtho2D(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
 
     renderer_initialized = true;
 }
@@ -119,6 +107,48 @@ static void draw_wall_slice(int x, float distance)
 
 
 /**
+ * draw_text writes a null-terminated ASCII string at screen coordinates
+ * (x, y) using the given GLUT bitmap font (e.g. GLUT_BITMAP_HELVETICA_18).
+ */
+static void draw_text(float x, float y, void *font, const char *text)
+{
+    glRasterPos2f(x, y);
+    while (*text)
+    {
+        glutBitmapCharacter(font, *text);
+        text++;
+    }
+}
+
+/**
+ * render_win_screen paints a simple "you won" overlay over the whole window.
+ * Called from render_frame when game->won is true.
+ */
+static void render_win_screen(void)
+{
+    glClearColor(0.05f, 0.10f, 0.15f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glColor3f(1.0f, 0.85f, 0.20f);
+    draw_text(SCREEN_WIDTH / 2.0f - 60.0f,
+              SCREEN_HEIGHT / 2.0f + 40.0f,
+              GLUT_BITMAP_TIMES_ROMAN_24,
+              "YOU WIN!");
+
+    glColor3f(0.85f, 0.85f, 0.85f);
+    draw_text(SCREEN_WIDTH / 2.0f - 90.0f,
+              SCREEN_HEIGHT / 2.0f,
+              GLUT_BITMAP_HELVETICA_18,
+              "You reached the exit.");
+
+    glColor3f(0.65f, 0.65f, 0.65f);
+    draw_text(SCREEN_WIDTH / 2.0f - 75.0f,
+              SCREEN_HEIGHT / 2.0f - 40.0f,
+              GLUT_BITMAP_HELVETICA_12,
+              "Press ESC to quit");
+}
+
+/**
  * render_frame clears the screen, sets up the projection, renders the scene,
  * and swaps the GLUT double buffer to display the frame.
  */
@@ -133,7 +163,10 @@ void render_frame(t_game *game)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    raycast_render(game);
+    if (game->won)
+        render_win_screen();
+    else
+        raycast_render(game);
 
     glutSwapBuffers();
     glFlush();

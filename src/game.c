@@ -24,8 +24,17 @@ void init_player_from_map(t_game *game)
 void init_game(t_game *game, const char *map_file)
 {
     game->map = load_map_from_file(map_file); //loads map from file using map_load.c function
+    game->player = malloc(sizeof(t_player));
+    if (!game->player)
+    {
+        fprintf(stderr, "Error: failed to allocate player\n");
+        free_map(&game->map);
+        exit(EXIT_FAILURE);
+    }
+    game->input = &input; //point to the global input state defined in input.c
     init_player_from_map(game); //initialises the player
     game->running = true; //game can run when true
+    game->won = false; //win flag, flipped when the player reaches a 'D' tile
 }
 
 /**
@@ -37,6 +46,9 @@ void update_game(t_game *game)
     int player_tile_y;
     char current_tile;
 
+    if (game->won) //freeze game logic on the win screen
+        return;
+
     player_tile_x = (int)game->player->player_x;
     player_tile_y = (int)game->player->player_y;
 
@@ -45,7 +57,7 @@ void update_game(t_game *game)
     if (current_tile == 'D')
     {
         printf("You found the exit!\n");
-        game->running = false;
+        game->won = true;
     }
 }
 
@@ -56,6 +68,8 @@ void update_game(t_game *game)
 void cleanup_game(t_game *game)
 {
     free_map(&game->map);
+    free(game->player);
+    game->player = NULL;
 }
 
 

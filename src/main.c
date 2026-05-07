@@ -20,35 +20,43 @@ static const char *choose_map(void)
 
     printf("Choose a map:\n");
     printf("1. level1\n");
-	printf("2. level2\n");
-	printf("3. level3\n");
+    printf("2. level2\n");
+    printf("3. level3\n");
     printf("4. ai generated map\n");
-	printf("Enter choice: ");
-	scanf("%d", &choice);
-
+    printf("Enter choice: ");
+    if (scanf("%d", &choice) != 1)
+    {
+        printf("Invalid input. Defaulting to level1.\n");
+        return ("assets/maps/level1.txt");
+    }
 
     if (choice == 2)
-		return ("assets/maps/level2.txt");
-	if (choice == 3)
-		return ("assets/maps/level3.txt");
+        return ("assets/maps/level2.txt");
+    if (choice == 3)
+        return ("assets/maps/level3.txt");
     if (choice == 4)
     {
-        system(".venv/bin/python tools/generate_map.py"); 
-	    return ("assets/maps/generated/generated_map.txt");
+#ifdef _WIN32
+        system(".venv\\Scripts\\python.exe tools\\generate_map.py");
+#else
+        system(".venv/bin/python tools/generate_map.py");
+#endif
+        return ("assets/maps/generated/generated_map.txt");
     }
     if (choice != 1)
         printf("Invalid choice. Defaulting to level1.\n");
-	    return ("assets/maps/level1.txt");
+    return ("assets/maps/level1.txt");
 }
 
 static void game_loop_wrapper(void)
 {
-    if (!g_game.running)
+    if (!g_game.running || g_game.input->quit_requested)
     {
         cleanup_game(&g_game);
         exit(0);
     }
-    handle_input(&g_game);
+    if (!g_game.won) //freeze player movement while the win screen is showing
+        handle_input(&g_game);
     update_game(&g_game);
     glutPostRedisplay();
 }

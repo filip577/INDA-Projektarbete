@@ -17,6 +17,7 @@
     t_input *input;
 
     bool running;
+    bool won;
  } t_game;
 
  

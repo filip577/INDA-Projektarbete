@@ -15,7 +15,9 @@
 #include "../include/input.h"
 #include "../include/enemies.h"
 
+#ifndef M_PI
 #define M_PI 3.14159265358979323846
+#endif
 
 /*
 Takes values from the player struct and updates the player position on the map using trigonometry

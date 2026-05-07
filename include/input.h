@@ -9,6 +9,7 @@ typedef struct s_input{
     bool walking_forwards;
     bool walking_backwards;
     bool shooting;
+    bool quit_requested;
 }t_input;
 
 extern t_input input; //creates a variable of the struct used for the input handling and update the player

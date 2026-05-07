@@ -179,6 +179,44 @@ static void validate_player_start(t_map *map)
 }
 
 /**
+ * Checks that the map only contains supported tile characters and that there
+ * is at least one exit tile ('D'). Allowed tiles: '0' floor, '1' wall, 'P'
+ * player start, 'D' exit/door (stepping on it triggers the win screen).
+ */
+static void validate_tiles(t_map *map)
+{
+    int x;
+    int y;
+    int door_count;
+    char c;
+
+    door_count = 0;
+    y = 0;
+    while (y < map->height)
+    {
+        x = 0;
+        while (x < map->width)
+        {
+            c = map->grid[y][x];
+            if (c != '0' && c != '1' && c != 'P' && c != 'D')
+            {
+                free_map(map);
+                exit_with_error("map contains an invalid tile (allowed: 0, 1, P, D)");
+            }
+            if (c == 'D')
+                door_count++;
+            x++;
+        }
+        y++;
+    }
+    if (door_count < 1)
+    {
+        free_map(map);
+        exit_with_error("map must contain at least one exit tile (D)");
+    }
+}
+
+/**
  * Main function which the rest of the project will use
  * Loads the whole map from a file and returns a complete t_map
  */
@@ -199,6 +237,7 @@ t_map load_map_from_file(const char *filename)
 
     validate_rectangular_map(&map); //Checks that all lines has same length
     validate_player_start(&map); //Checks that there is exactly one player
+    validate_tiles(&map); //Checks that all tiles are valid and at least one exit (D) exists
     find_player_start(&map); //When we know there is exactly one 'P' we can find and store its position
 
     return map;
