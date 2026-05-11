@@ -6,7 +6,7 @@
 
 t_enemy enemies[10];
 int enemy_count = 1;
-enemies[0] = {true, 2.0f, 2.0f, 100};
+enemies[0] = {true, 2.0f, 2.0f, 100, 11};
 
 void enemy_update_position(t_player *player, t_enemy *enemies[],t_map *map, int enemy_count){
     float movement_speed = 1.5;
@@ -14,13 +14,23 @@ void enemy_update_position(t_player *player, t_enemy *enemies[],t_map *map, int 
         //atan2() handles division with zero which atan() doesn't safely do
         float player_direction = atan2(player->player_y - enemies[i]->enemy_y , player->player_x - enemies[i]->enemy_x); 
         if(player_visible_too_enemy(player, enemies[i], map, player_direction)){
+            enemies[i]->amount_of_updates_since_seen_player = 0;
             enemies[i]->enemy_x += cos(player_direction) * movement_speed;
             enemies[i]->enemy_y += sin(player_direction) * movement_speed;
             float distance = sqrt(pow(player->player_x - enemies[i]->enemy_x, 2) + pow(player->player_y - enemies[i]->enemy_y, 2));
-            if(distance < 0.03){
+            if(distance < 0.01){
                 player-> player_health -= 25;
-            }            
+            }         
         }
+        if(!player_visible_too_enemy(player, enemies[i], map, player_direction) && (enemies[i]->amount_of_updates_since_seen_player = 0)){
+            enemies[i]->amount_of_updates_since_seen_player = 1;
+        }
+        if(!player_visible_too_enemy(player, enemies[i], map, player_direction) && ((enemies[i]->amount_of_updates_since_seen_player >= 1) && (enemies[i]->amount_of_updates_since_seen_player <= 10))){
+            enemies[i]->amount_of_updates_since_seen_player += 1;
+            float angle_to_last_seen_position = atan2(enemies[i]->last_seen_player_y - enemies[i]->enemy_y , enemies[i]->last_seen_player_x - enemies[i]->enemy_x);
+            enemies[i]->enemy_x += cos(angle_to_last_seen_position) * movement_speed;
+            enemies[i]->enemy_y += sin(angle_to_last_seen_position) * movement_speed;
+        }        
     }
 }
 
@@ -38,3 +48,5 @@ bool player_visible_too_enemy(t_player *player, t_enemy *enemy, t_map *map, floa
     }
     return false;
 }
+
+
