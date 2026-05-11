@@ -3,6 +3,10 @@
 #include "../include/map.h"
 #include <math.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 t_enemy enemies[10];
 int enemy_count = 1;
@@ -30,7 +34,20 @@ void enemy_update_position(t_player *player, t_enemy *enemies[],t_map *map, int 
             float angle_to_last_seen_position = atan2(enemies[i]->last_seen_player_y - enemies[i]->enemy_y , enemies[i]->last_seen_player_x - enemies[i]->enemy_x);
             enemies[i]->enemy_x += cos(angle_to_last_seen_position) * movement_speed;
             enemies[i]->enemy_y += sin(angle_to_last_seen_position) * movement_speed;
-        }        
+        }
+        if(!player_visible_too_enemy(player, enemies[i], map, player_direction) && (enemies[i]->amount_of_updates_since_seen_player >= 11)){
+            if(enemies[i]->enemy_wandering_updates > 30){
+                enemies[i]->enemy_wandering_angle = ((float)(rand() % 100) / 100 ) * 2.0 * M_PI;
+                enemies[i]->enemy_wandering_updates = 0;
+            }
+            float new_enemy_x = enemies[i]->enemy_x + cos(enemies[i]->enemy_wandering_angle) * movement_speed;
+            float new_enemy_y = enemies[i]->enemy_y + sin(enemies[i]->enemy_wandering_angle) * movement_speed;
+            if(!is_wall(map, new_enemy_x, new_enemy_y)){
+                enemies[i]->enemy_x = new_enemy_x;
+                enemies[i]->enemy_y = new_enemy_y;
+            }
+            enemies[i]->enemy_wandering_updates++;
+        }
     }
 }
 
