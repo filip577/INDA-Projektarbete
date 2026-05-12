@@ -14,10 +14,11 @@ typedef struct s_player {
     float player_angle;
     float rotation_speed;
     float movement_speed;
+    float player_health;
 } t_player;
 
 void player_position_update(t_player *p, t_map *map, t_input *input); //Updates the player position on the map
 
-//void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input); //Player shoots in the direction its facing
+void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input); //Player shoots in the direction its facing
 
 #endif

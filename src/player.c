@@ -64,6 +64,9 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
     }
 }
 /*
+*shoots a ray in the dircetion the player is looking and check the distance between the ray and all enemies and 
+if it collides it does damage to the enemy
+*/
 void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input){
     input-> shooting = false;
     float shooting_ray_x = p-> player_x;
@@ -89,4 +92,3 @@ void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_
 
     }
 }
-*/
