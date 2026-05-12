@@ -3,7 +3,8 @@
 
 #include "../include/map.h"
 #include "../include/input.h"
-#include "../include/enemies.h"
+
+typedef struct s_enemy t_enemy;
 
 /*
 Defines a struct for the player

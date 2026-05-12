@@ -7,7 +7,8 @@ SRC = src/main.c \
       src/map_load.c\
       src/game.c\
       src/render.c \
-      src/raycast.c
+      src/raycast.c \
+      src/enemies.c 
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror \

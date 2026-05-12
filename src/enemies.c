@@ -10,7 +10,6 @@
 
 t_enemy enemies[10];
 int enemy_count = 1;
-enemies[0] = {true, 2.0f, 2.0f, 100, 11};
 
 void enemy_update_position(t_player *player, t_enemy *enemies[],t_map *map, int enemy_count){
     float movement_speed = 1.5;

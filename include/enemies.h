@@ -2,6 +2,11 @@
 #define ENEMIES_H // Define enemies_h
 
 #include <stdbool.h>
+#include "../include/map.h"
+
+
+typedef struct s_player t_player;
+
 typedef struct s_enemy{
     bool alive;
     float enemy_x;
