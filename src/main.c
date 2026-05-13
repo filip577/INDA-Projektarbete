@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     SDL_Init(SDL_INIT_AUDIO); //Initialises SDLs audio system
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); //Configures SDL audio engine
-    shoot_sound = Mix_LoadWAV("assets/mrfriends-pistol-shot-233473.mp3");
+    shoot_sound = Mix_LoadWAV("assets/mrfriends-pistol-shot-233473.wav");
 
     map_file = choose_map();
     init_game(&g_game, map_file);

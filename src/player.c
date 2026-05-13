@@ -25,7 +25,7 @@ extern Mix_Chunk *shoot_sound;
 /*
 Takes values from the player struct and updates the player position on the map using trigonometry
 */
-void player_position_update(t_player *p, t_map *map, t_input *input){
+void player_position_update(t_player *p, t_map *map, t_input *input, t_enemy *enemies, int enemy_count){
     float new_player_x = p->player_x;
     float new_player_y = p->player_y;
     if(input-> turning_left){
@@ -57,13 +57,17 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
         p->player_x = new_player_x;
         }  
     }
+
+    if(input->shooting){
+        player_shoot(p , map, enemies, enemy_count, input);
+    }
 }
 /*
 *shoots a ray in the dircetion the player is looking and check the distance between the ray and all enemies and 
 if it collides it does damage to the enemy
 */
 //sudo apt install libsdl2-dev libsdl2-mixer-dev
-void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input){
+void player_shoot(t_player *p, t_map *m, t_enemy *enemies, int enemy_count, t_input *input){
     input-> shooting = false;
     Mix_PlayChannel(-1,shoot_sound, 0);
     float shooting_ray_x = p-> player_x;
@@ -73,13 +77,13 @@ void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_
         shooting_ray_x += cos(p-> player_angle) * ray_step_distance;
         shooting_ray_y += sin(p-> player_angle) * ray_step_distance;
         for(int i = 0; i < enemy_count; i++){
-            if(enemies[i]->alive){
-                float distance = sqrt(pow(shooting_ray_x - enemies[i]->enemy_x, 2) + pow(shooting_ray_y - enemies[i]->enemy_y,2));
+            if(enemies[i].alive){
+                float distance = sqrt(pow(shooting_ray_x - enemies[i].enemy_x, 2) + pow(shooting_ray_y - enemies[i].enemy_y,2));
                 if(distance < 0.01){
-                    enemies[i]->health -= 25 - 0.1 * sqrt(pow(p-> player_x - enemies[i]->enemy_x, 2) + 
-                    pow(p-> player_y - enemies[i]->enemy_y,2)); //Damage drop off based on distance from player to enemy
-                    if(enemies[i]->health <= 0){
-                        enemies[i] = false;
+                    enemies[i].health -= 25 - 0.1 * sqrt(pow(p-> player_x - enemies[i].enemy_x, 2) + 
+                    pow(p-> player_y - enemies[i].enemy_y,2)); //Damage drop off based on distance from player to enemy
+                    if(enemies[i].health <= 0){
+                        enemies[i].alive = false;
                         enemy_count--;
                     }
                     return;

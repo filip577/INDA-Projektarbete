@@ -33,8 +33,8 @@ void keyUp(unsigned char key, int x, int y) {
     if(key == 's') input.walking_backwards = false; 
 }
 
-
+extern int enemy_count;
 
 void handle_input(struct s_game *game) {
-	player_position_update(game->player, &game->map, game->input);
+	player_position_update(game->player, &game->map, game->input, game->enemies, enemy_count );
 }
