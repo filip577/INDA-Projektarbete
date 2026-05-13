@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -12,6 +14,8 @@
 #endif
 
 static t_game g_game;
+
+Mix_Chunk *shoot_sound;
 
 
 static const char *choose_map(void)
@@ -61,6 +65,11 @@ static void display_callback(void)
 int main(int argc, char **argv)
 {
     const char *map_file;
+
+    SDL_Init(SDL_INIT_AUDIO); //Initialises SDLs audio system
+
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); //Configures SDL audio engine
+    shoot_sound = Mix_LoadWAV("assets/mrfriends-pistol-shot-233473.mp3");
 
     map_file = choose_map();
     init_game(&g_game, map_file);

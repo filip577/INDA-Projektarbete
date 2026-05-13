@@ -18,7 +18,7 @@ void keyDown(unsigned char key, int x, int y) {
     if(key == 'd') input.turning_right = true;
     if(key == 'w') input.walking_forwards = true;
     if(key == 's') input.walking_backwards = true;   
-    //if(key == ' ') input.shooting = true;  
+    if(key == ' ') input.shooting = true;  
 }
 
 /*

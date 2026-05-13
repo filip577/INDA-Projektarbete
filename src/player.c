@@ -14,11 +14,14 @@
 #include "../include/map.h"
 #include "../include/input.h"
 #include "../include/enemies.h"
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
+extern Mix_Chunk *shoot_sound;
 /*
 Takes values from the player struct and updates the player position on the map using trigonometry
 */
@@ -59,8 +62,10 @@ void player_position_update(t_player *p, t_map *map, t_input *input){
 *shoots a ray in the dircetion the player is looking and check the distance between the ray and all enemies and 
 if it collides it does damage to the enemy
 */
+//sudo apt install libsdl2-dev libsdl2-mixer-dev
 void player_shoot(t_player *p, t_map *m, t_enemy *enemies[], int enemy_count, t_input *input){
     input-> shooting = false;
+    Mix_PlayChannel(-1,shoot_sound, 0);
     float shooting_ray_x = p-> player_x;
     float shooting_ray_y = p-> player_y;
     float ray_step_distance = 0.05f;
