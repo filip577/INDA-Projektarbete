@@ -7,7 +7,8 @@ SRC = src/main.c \
       src/map_load.c\
       src/game.c\
       src/render.c \
-      src/raycast.c
+      src/raycast.c \
+      src/enemies.c 
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror \
@@ -20,7 +21,7 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	LDFLAGS = -fsanitize=address -framework OpenGL -framework GLUT
 else
-	LDFLAGS = -lGL -lGLU -lglut -lm
+	LDFLAGS = -lGL -lGLU -lglut -lm -lSDL2 -lSDL2_mixer
 endif
 
 all:

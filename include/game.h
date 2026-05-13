@@ -2,6 +2,7 @@
 #define GAME_H // Define GAME_H
 #include "../include/map.h"    //Interface
 #include "../include/player.h" // -II-
+#include "../include/enemies.h" // -II-
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -15,6 +16,7 @@
     t_map map;
     t_player *player;
     t_input *input;
+    t_enemy *enemies;
 
     bool running;
  } t_game;
