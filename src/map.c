@@ -21,7 +21,8 @@ char get_tile(t_map *map, int x, int y)
 }
 
 /**
- * Returns 1 if the position has a '1', else 0
+ * Returns 1 if the position has a '1', else 0.
+ * All other tile types (P, K, D, E, 0) are walkable.
  */
 int is_wall(t_map *map, int x,int y)
 {
@@ -52,6 +53,51 @@ void find_player_start(t_map *map)
                 x++;
             }
             y++;
+    }
+}
+
+/**
+ * Single sweep across the grid that records the key tile, exit tile and
+ * every enemy spawn tile. Assumes validation already enforced exactly one
+ * 'K', one 'D' and at least one 'E'.
+ */
+void find_special_tiles(t_map *map)
+{
+    int x;
+    int y;
+
+    map->key_x = -1;
+    map->key_y = -1;
+    map->exit_x = -1;
+    map->exit_y = -1;
+    map->enemy_spawn_count = 0;
+
+    y = 0;
+    while (y < map->height)
+    {
+        x = 0;
+        while (x < map->width)
+        {
+            char tile = map->grid[y][x];
+            if (tile == 'K')
+            {
+                map->key_x = x;
+                map->key_y = y;
+            }
+            else if (tile == 'D')
+            {
+                map->exit_x = x;
+                map->exit_y = y;
+            }
+            else if (tile == 'E' && map->enemy_spawn_count < MAX_ENEMIES)
+            {
+                map->enemy_spawn_x[map->enemy_spawn_count] = x;
+                map->enemy_spawn_y[map->enemy_spawn_count] = y;
+                map->enemy_spawn_count++;
+            }
+            x++;
+        }
+        y++;
     }
 }
 

@@ -8,7 +8,9 @@ typedef struct s_input{
     bool turning_right;
     bool walking_forwards;
     bool walking_backwards;
-    bool shooting;
+    bool shooting;       //true while space is held; cooldown gates fire rate
+    bool pickup_pressed; //one-shot, set on F keydown
+    bool quit_pressed;   //one-shot, set on ESC keydown
 }t_input;
 
 extern t_input input; //creates a variable of the struct used for the input handling and update the player

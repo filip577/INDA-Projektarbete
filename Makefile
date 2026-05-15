@@ -6,6 +6,9 @@ SRC = src/main.c \
       src/player.c \
       src/map_load.c\
       src/game.c\
+      src/enemies.c\
+      src/sprite.c\
+      src/stb_image_impl.c\
       src/render.c \
       src/raycast.c
 

@@ -12,6 +12,9 @@ Current map symbols:
     1 = wall
     0 = floor
     P = player start
+    K = key (exactly one)
+    D = exit / door (exactly one)
+    E = enemy spawn (at least one)
 """
 
 from pathlib import Path
@@ -28,6 +31,9 @@ MODEL = "mistral"
 
 INNER_WIDTH = 20
 INNER_HEIGHT = 20
+
+# Game-side validation requires at least one of these to pass.
+ENEMY_SPAWN_COUNT = 4
 
 OUTPUT_PATH = Path("assets/maps/generated/generated_map.txt")
 
@@ -79,7 +85,7 @@ def is_correct_size(rows: list[str]) -> bool:
 
 def has_valid_symbols(rows: list[str]) -> bool:
     """Check that only allowed map symbols are used."""
-    allowed = {"1", "0", "P"}
+    allowed = {"1", "0", "P", "K", "D", "E"}
     return all(ch in allowed for row in rows for ch in row)
 
 
@@ -92,22 +98,20 @@ def find_player(rows: list[str]) -> Optional[Tuple[int, int]]:
     return None
 
 
-def basic_playable(rows: list[str]) -> bool:
+def reachable_floor_tiles(rows: list[str]) -> set[tuple[int, int]]:
     """
-    Basic playability check.
-
-    Starting from P, verify that the player can reach at least a few
-    walkable tiles. This is intentionally softer than requiring the
-    whole map to be one connected region.
+    Flood-fill from the player start across all walkable tiles
+    (floor, key, exit, enemy spawn) and return the visited coordinates.
     """
     start = find_player(rows)
     if start is None:
-        return False
+        return set()
 
     width = len(rows[0])
     height = len(rows)
     stack = [start]
-    visited = set()
+    visited: set[tuple[int, int]] = set()
+    walkable = {"0", "P", "K", "D", "E"}
 
     while stack:
         x, y = stack.pop()
@@ -118,11 +122,21 @@ def basic_playable(rows: list[str]) -> bool:
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             nx, ny = x + dx, y + dy
             if 0 <= nx < width and 0 <= ny < height:
-                if rows[ny][nx] in {"0", "P"} and (nx, ny) not in visited:
+                if rows[ny][nx] in walkable and (nx, ny) not in visited:
                     stack.append((nx, ny))
 
-    # Require that the player can move through at least a small area
-    return len(visited) >= 4
+    return visited
+
+
+def basic_playable(rows: list[str]) -> bool:
+    """
+    Basic playability check.
+
+    Starting from P, verify that the player can reach at least a few
+    walkable tiles. This is intentionally softer than requiring the
+    whole map to be one connected region.
+    """
+    return len(reachable_floor_tiles(rows)) >= 4
 
 
 def add_outer_walls(rows: list[str]) -> list[str]:
@@ -149,7 +163,7 @@ def has_good_tile_balance(rows: list[str]) -> bool:
     """
     total = len(rows) * len(rows[0])
     wall_count = count_char(rows, "1")
-    floor_count = count_char(rows, "0") + count_char(rows, "P")
+    floor_count = sum(count_char(rows, ch) for ch in ("0", "P", "K", "D", "E"))
 
     wall_ratio = wall_count / total
     floor_ratio = floor_count / total
@@ -176,6 +190,10 @@ def too_many_identical_rows(rows: list[str]) -> bool:
     return max(counts.values()) > 5
 
 
+def _set_tile(rows: list[str], x: int, y: int, ch: str) -> None:
+    rows[y] = rows[y][:x] + ch + rows[y][x + 1:]
+
+
 def place_player(rows: list[str]) -> list[str]:
     """
     Place the player start on the first available floor tile.
@@ -183,10 +201,58 @@ def place_player(rows: list[str]) -> list[str]:
     for y, row in enumerate(rows):
         for x, ch in enumerate(row):
             if ch == "0":
-                rows[y] = row[:x] + "P" + row[x + 1:]
+                _set_tile(rows, x, y, "P")
                 return rows
 
     raise ValueError("No floor tile found for player placement")
+
+
+def place_special_tiles(rows: list[str]) -> list[str]:
+    """
+    Place the key, the exit door and the enemy spawns on reachable floor
+    tiles. Assumes the player start has already been placed.
+
+    Strategy:
+    - Take every reachable floor tile from the player (excluding the
+      player tile itself) and use it as the candidate pool.
+    - Pick the candidate farthest from the player for the exit so the
+      level isn't trivially solvable.
+    - Pick a candidate roughly between the player and the exit as the
+      key tile.
+    - Spread enemy spawns across remaining candidates.
+    """
+    player = find_player(rows)
+    if player is None:
+        raise ValueError("Cannot place special tiles without a player start")
+
+    reachable = reachable_floor_tiles(rows) - {player}
+    candidates = [pos for pos in reachable if rows[pos[1]][pos[0]] == "0"]
+    if len(candidates) < 2 + ENEMY_SPAWN_COUNT:
+        raise ValueError("Not enough reachable floor tiles for key/exit/enemies")
+
+    def manhattan(a: tuple[int, int], b: tuple[int, int]) -> int:
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+    exit_pos = max(candidates, key=lambda pos: manhattan(pos, player))
+    candidates.remove(exit_pos)
+
+    # Pick the key near the midpoint between player and exit so the
+    # player has to traverse a chunk of the map either way.
+    midpoint = ((player[0] + exit_pos[0]) // 2, (player[1] + exit_pos[1]) // 2)
+    key_pos = min(candidates, key=lambda pos: manhattan(pos, midpoint))
+    candidates.remove(key_pos)
+
+    # Enemy spawns: pick evenly spaced candidates from the remaining pool
+    # so they don't all clump together in one corner.
+    step = max(1, len(candidates) // ENEMY_SPAWN_COUNT)
+    enemy_positions = candidates[::step][:ENEMY_SPAWN_COUNT]
+
+    _set_tile(rows, exit_pos[0], exit_pos[1], "D")
+    _set_tile(rows, key_pos[0], key_pos[1], "K")
+    for ex, ey in enemy_positions:
+        _set_tile(rows, ex, ey, "E")
+
+    return rows
 
 
 def validate_rows(rows: list[str]) -> tuple[bool, str]:
@@ -209,6 +275,15 @@ def validate_rows(rows: list[str]) -> tuple[bool, str]:
 
     if count_char(rows, "P") != 1:
         return False, "wrong number of players"
+
+    if count_char(rows, "K") != 1:
+        return False, "wrong number of keys"
+
+    if count_char(rows, "D") != 1:
+        return False, "wrong number of exits"
+
+    if count_char(rows, "E") < 1:
+        return False, "no enemy spawns"
 
     if not basic_playable(rows):
         return False, "not playable"
@@ -289,6 +364,7 @@ def main() -> None:
 
             rows = parse_rows(raw_text)
             rows = place_player(rows)
+            rows = place_special_tiles(rows)
 
             print("ROW COUNTS:")
             counts = {}

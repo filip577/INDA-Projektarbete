@@ -149,32 +149,81 @@ static void validate_rectangular_map(t_map *map)
 }
 
 /**
- * Checks that the map has exactly one player or 'P'
- * Important to know where the player is supposed to start
+ * Single pass over the grid counting every tile we care about for
+ * validation. Keeps validation cheap and avoids walking the grid once
+ * per tile type.
  */
-static void validate_player_start(t_map *map)
+static void count_special_tiles(t_map *map, int *player_count, int *key_count,
+                                int *exit_count, int *enemy_count)
 {
     int x;
     int y;
-    int player_count; //Counts how many player starts there is
+    char tile;
 
-    player_count = 0;
+    *player_count = 0;
+    *key_count = 0;
+    *exit_count = 0;
+    *enemy_count = 0;
+
     y = 0;
     while (y < map->height)
     {
         x = 0;
         while (x < map->width)
         {
-            if (map->grid[y][x] == 'P') //goes through the whole map and counts all 'P'
-                player_count++;
+            tile = map->grid[y][x];
+            if (tile == 'P')
+                (*player_count)++;
+            else if (tile == 'K')
+                (*key_count)++;
+            else if (tile == 'D')
+                (*exit_count)++;
+            else if (tile == 'E')
+                (*enemy_count)++;
             x++;
         }
         y++;
     }
-    if (player_count != 1) //If there isn't one exact starting position something is wrong, 0 -> no starting position, 2+ -> unclear which position is start
+}
+
+/**
+ * Checks that the map declares exactly one player start, exactly one key,
+ * exactly one exit and at least one enemy spawn. The "at least one enemy"
+ * rule is the only enemy-related validation requirement.
+ */
+static void validate_special_tiles(t_map *map)
+{
+    int player_count;
+    int key_count;
+    int exit_count;
+    int enemy_count;
+
+    count_special_tiles(map, &player_count, &key_count, &exit_count, &enemy_count);
+
+    if (player_count != 1)
     {
-        free_map(map); //Cleanup and error message
+        free_map(map);
         exit_with_error("map must contain exactly one player start (P)");
+    }
+    if (key_count != 1)
+    {
+        free_map(map);
+        exit_with_error("map must contain exactly one key (K)");
+    }
+    if (exit_count != 1)
+    {
+        free_map(map);
+        exit_with_error("map must contain exactly one exit (D)");
+    }
+    if (enemy_count < 1)
+    {
+        free_map(map);
+        exit_with_error("map must contain at least one enemy spawn (E)");
+    }
+    if (enemy_count > MAX_ENEMIES)
+    {
+        free_map(map);
+        exit_with_error("map declares too many enemy spawns (E)");
     }
 }
 
@@ -192,14 +241,20 @@ t_map load_map_from_file(const char *filename)
     map.grid = NULL;
     map.player_start_x = -1;
     map.player_start_y = -1;
+    map.key_x = -1;
+    map.key_y = -1;
+    map.exit_x = -1;
+    map.exit_y = -1;
+    map.enemy_spawn_count = 0;
 
     map.height = count_lines_in_file(filename); //Count how many lines the file has = height
     map.grid = read_grid_from_file(filename, map.height); //Read the actual map to memory
     map.width = strlen(map.grid[0]); //Set the width to the length of the first row, because we need it to be rectanuglar all rows are same length
 
     validate_rectangular_map(&map); //Checks that all lines has same length
-    validate_player_start(&map); //Checks that there is exactly one player
-    find_player_start(&map); //When we know there is exactly one 'P' we can find and store its position
+    validate_special_tiles(&map);   //Checks player / key / exit / enemy counts
+    find_player_start(&map);        //Store player spawn coordinates
+    find_special_tiles(&map);       //Store key, exit and enemy spawn coordinates
 
     return map;
 }

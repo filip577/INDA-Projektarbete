@@ -15,8 +15,29 @@
 #define MAX_DEPTH 20.0 // Rendering distance of 20
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846 
+#define M_PI 3.14159265358979323846
 #endif
+
+/* Per-column wall depth produced by the last raycast pass. Sprite
+   rendering reads this to know whether a given screen column is
+   occluded by a wall. Float so MAX_DEPTH sentinels still compare
+   correctly when no wall is hit. */
+static float g_wall_distance[SCREEN_WIDTH];
+
+const float *raycast_get_wall_distances(void)
+{
+    return g_wall_distance;
+}
+
+int raycast_get_screen_width(void)
+{
+    return SCREEN_WIDTH;
+}
+
+float raycast_get_fov_radians(void)
+{
+    return FOV * (float)(M_PI / 180.0);
+}
 
 /**
  * Cast a ray from the player's position at a given angle and return the distance to the nearest wall or max reindering distance if no wall is hit.
@@ -117,9 +138,11 @@ void raycast_render(t_game *game)
         // Cast the ray and get the distance to the nearest wall
         distance = cast_ray(game->player, &game->map, ray_angle); //grid to get 2d map
         // Correct distance for fish-eye effect
-        distance *= cos(angle_offset * fov_radians); 
+        distance *= cos(angle_offset * fov_radians);
+        // Stash perpendicular distance so the sprite renderer can occlude per column
+        g_wall_distance[x] = (distance > 0.0f) ? distance : (float)MAX_DEPTH;
         // Draw the vertical slice of the wall based on the distance
-        draw_wall_slice(x, distance); 
+        draw_wall_slice(x, distance);
 
     }
 }
